@@ -1,0 +1,52 @@
+{{define "content"}}
+<header class="page-header page-header--home">
+    <span class="eyebrow">HOME / 01</span>
+    <h1>КРЕСТИКИ-НОЛИКИ<br><span class="accent">В БРАУЗЕРЕ.</span></h1>
+    <p>
+        Учебный веб-интерфейс для проекта Tic Tac Toe: авторизация, PvE/PvP,
+        история игр и таблица лидеров поверх существующего Go API.
+    </p>
+</header>
+
+<section class="hero-grid">
+    <article class="panel intro-panel">
+        <div>
+            <span class="terminal-line">&gt; service.status = online</span>
+            <h2>Минимум лишнего.<br>Максимум крестиков.</h2>
+            <p>
+                Интерфейс намеренно простой: серверные Go-шаблоны, обычный CSS и немного JavaScript.
+                Никаких frontend-фреймворков и сборщиков.
+            </p>
+        </div>
+
+        <div class="actions">
+            <a class="button button--primary" href="/play">НАЧАТЬ ИГРУ</a>
+            <a class="button" href="/leaderboard">ТАБЛИЦА ЛИДЕРОВ</a>
+        </div>
+    </article>
+
+    <div class="game-preview" aria-label="Декоративное поле крестики-нолики">
+        <div class="cell accent">X</div><div class="cell"></div><div class="cell">O</div>
+        <div class="cell"></div><div class="cell accent">X</div><div class="cell"></div>
+        <div class="cell">O</div><div class="cell"></div><div class="cell accent">X</div>
+    </div>
+</section>
+
+<section class="feature-grid">
+    <article class="panel compact">
+        <span class="panel-number">01</span>
+        <h3>Go backend</h3>
+        <p>Игры, JWT, PostgreSQL и серверная логика уже работают в существующем проекте.</p>
+    </article>
+    <article class="panel compact">
+        <span class="panel-number">02</span>
+        <h3>Server templates</h3>
+        <p>Sidebar, layout и footer вынесены в общие Go HTML-шаблоны.</p>
+    </article>
+    <article class="panel compact">
+        <span class="panel-number">03</span>
+        <h3>Vanilla JS</h3>
+        <p>Frontend общается с API через обычный fetch и не требует npm.</p>
+    </article>
+</section>
+{{end}}

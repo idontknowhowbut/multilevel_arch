@@ -48,7 +48,7 @@ func (s *Storage) load(id string) (game, error) {
 	ctx, cancel := context.WithTimeout(context.Background(), 60*time.Second)
 	defer cancel()
 
-	query := `SELECT id, board, status, type, move_player_id, owner_player_id
+	query := `SELECT id, board, status, type, move_player_id, owner_player_id, created_at
 		FROM games
 		WHERE id = $1`
 

@@ -1,0 +1,23 @@
+{{define "layout"}}
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{.Title}}</title>
+    <link rel="stylesheet" href="/static/css/style.css">
+    <script defer src="/static/js/api.js"></script>
+    <script defer src="/static/js/layout.js"></script>
+</head>
+<body>
+    {{template "sidebar" .}}
+
+    <main class="site-main">
+        <div class="main-wrap">
+            {{template "content" .}}
+            {{template "footer" .}}
+        </div>
+    </main>
+</body>
+</html>
+{{end}}

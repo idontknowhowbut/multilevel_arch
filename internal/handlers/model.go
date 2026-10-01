@@ -8,12 +8,6 @@ type createGameRequest struct {
 	GameType string `json:"gameType"`
 }
 
-type createGameResponse struct {
-	Id       string `json:"id"`
-	Board    Board  `json:"board"`
-	GameType string `json:"gameType"`
-}
-
 type gameRequest struct {
 	Board Board `json:"board" validate:"required"`
 }
@@ -21,6 +15,7 @@ type gameRequest struct {
 type gameResponse struct {
 	Id         string    `json:"id"`
 	Board      Board     `json:"board"`
+	OwnerId    string    `json:"ownerId"`
 	GameType   string    `json:"gameType"`
 	MoveUserId string    `json:"moveUserId"`
 	Status     string    `json:"status"`

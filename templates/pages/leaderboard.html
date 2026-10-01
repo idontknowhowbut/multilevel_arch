@@ -1,0 +1,28 @@
+{{define "content"}}
+<header class="page-header">
+    <span class="eyebrow">SCOREBOARD / 03</span>
+    <h1>ТАБЛИЦА<br><span class="accent">ЛИДЕРОВ.</span></h1>
+    <p>Рейтинг загружается напрямую из <code>GET /scoreboard</code>.</p>
+</header>
+
+<section class="panel table-panel">
+    <div class="section-heading">
+        <div>
+            <span class="terminal-line">&gt; scoreboard --limit 10</span>
+            <h2>Лучшие игроки</h2>
+        </div>
+        <button id="reload-leaderboard" class="button button--small" type="button">ОБНОВИТЬ</button>
+    </div>
+
+    <div id="leaderboard-loading" class="loading-line">Загрузка данных...</div>
+    <div id="leaderboard-error" class="error-box hidden"></div>
+
+    <div class="table-wrap">
+        <table>
+            <thead><tr><th>#</th><th>Игрок</th><th>Winrate</th></tr></thead>
+            <tbody id="leaderboard-body"></tbody>
+        </table>
+    </div>
+</section>
+<script defer src="/static/js/leaderboard.js"></script>
+{{end}}
