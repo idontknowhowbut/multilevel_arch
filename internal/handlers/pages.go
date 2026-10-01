@@ -7,6 +7,8 @@ import (
 	"time"
 )
 
+const sourceUrl = "https://github.com/idontknowhowbut/multilevel_arch"
+
 type PageData struct {
 	Title     string
 	Active    string
@@ -75,7 +77,7 @@ func (h *Handler) AboutPage(w http.ResponseWriter, r *http.Request) {
 		Title:     "Tic Tac Toe - About",
 		Active:    "about",
 		Year:      time.Now().Year(),
-		GitHubURL: "#",
+		GitHubURL: sourceUrl,
 	})
 }
 
