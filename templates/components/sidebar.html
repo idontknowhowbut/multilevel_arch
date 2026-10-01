@@ -1,30 +1,26 @@
 {{define "sidebar"}}
-<aside class="site-sidebar">
-    <a class="brand" href="/">
-        <span class="brand__title">TIC<br>TAC<br>TOE</span>
-        <span class="brand__subtitle">terminal edition</span>
+<aside class="sidebar">
+    <a class="logo" href="/" aria-label="Tic Tac Toe">
+        <span>TIC</span>
+        <span>TAC</span>
+        <span>TOE</span>
     </a>
 
-    <nav class="sidebar-nav">
-        <a class="nav-link {{if eq .Active "home"}}active{{end}}" href="/">Главная</a>
-        <a class="nav-link {{if eq .Active "play"}}active{{end}}" href="/play">Играть</a>
-        <a class="nav-link {{if eq .Active "leaderboard"}}active{{end}}" href="/leaderboard">Лидеры</a>
-        <a class="nav-link {{if eq .Active "history"}}active{{end}}" href="/history">История</a>
-        <a class="nav-link {{if eq .Active "about"}}active{{end}}" href="/about">О проекте</a>
+    <nav>
+        <a class="{{if eq .Active "home"}}active{{end}}" href="/">Главная</a>
+        <a class="{{if eq .Active "play"}}active{{end}}" href="/play">Играть</a>
+        <a class="{{if eq .Active "leaderboard"}}active{{end}}" href="/leaderboard">Лидеры</a>
+        <a class="{{if eq .Active "history"}}active{{end}}" href="/history">История</a>
+        <a class="{{if eq .Active "about"}}active{{end}}" href="/about">О проекте</a>
     </nav>
 
-    <div class="sidebar-spacer"></div>
-
-    <div id="session-box" class="session-box">
-        <div class="session-status">
-            <span class="status-dot"></span>
-            <div>
-                <strong id="session-title">OFFLINE</strong>
-                <span id="session-user">Не выполнен вход</span>
-            </div>
+    <div class="session">
+        <div class="session-user">
+            <span id="session-led" class="status-led" title="Не авторизован"></span>
+            <span id="session-user">Гость</span>
         </div>
-        <a id="login-link" class="sidebar-action" href="/login">Войти / регистрация</a>
-        <button id="logout-button" class="sidebar-action hidden" type="button">Выйти</button>
+        <a id="login-link" href="/login">Войти</a>
+        <button id="logout-button" class="hidden" type="button">Выйти</button>
     </div>
 </aside>
 {{end}}

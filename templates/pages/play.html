@@ -1,77 +1,51 @@
 {{define "content"}}
-<header class="page-header play-header">
-    <span class="eyebrow">PLAY / 02</span>
-    <h1>ИГРОВОЙ<br><span class="accent">ТЕРМИНАЛ.</span></h1>
-    <p>Создавай PvE/PvP игры, подключайся к лобби и делай ходы через существующий API.</p>
-</header>
-
-<section class="play-layout">
-    <div class="play-main">
-        <article class="panel game-panel">
-            <div class="section-heading">
-                <div>
-                    <span class="terminal-line">&gt; game.session</span>
-                    <h2 id="game-title">Нет активной игры</h2>
-                </div>
-                <button id="close-game" class="button button--small hidden" type="button">ЗАКРЫТЬ ПОЛЕ</button>
-            </div>
-
-            <div class="game-meta">
-                <div><span>ID</span><strong id="game-id">—</strong></div>
-                <div><span>Режим</span><strong id="game-type">—</strong></div>
-                <div><span>Моя сторона</span><strong id="game-role">—</strong></div>
-            </div>
-
-            <div id="game-status" class="game-status">Создай игру или выбери доступную.</div>
-
-            <div id="game-board" class="interactive-board" aria-label="Игровое поле">
-                <button class="board-cell" data-row="0" data-col="0" type="button"></button>
-                <button class="board-cell" data-row="0" data-col="1" type="button"></button>
-                <button class="board-cell" data-row="0" data-col="2" type="button"></button>
-                <button class="board-cell" data-row="1" data-col="0" type="button"></button>
-                <button class="board-cell" data-row="1" data-col="1" type="button"></button>
-                <button class="board-cell" data-row="1" data-col="2" type="button"></button>
-                <button class="board-cell" data-row="2" data-col="0" type="button"></button>
-                <button class="board-cell" data-row="2" data-col="1" type="button"></button>
-                <button class="board-cell" data-row="2" data-col="2" type="button"></button>
-            </div>
-
-            <div id="game-error" class="error-box hidden"></div>
-        </article>
-    </div>
-
-    <aside class="play-side">
-        <article class="panel control-panel">
-            <span class="terminal-line">&gt; game.create</span>
-            <h2>Новая игра</h2>
-            <p class="muted">PvE — против minimax-бота. PvP — ожидание второго пользователя.</p>
-            <div class="stack">
-                <button id="create-pve" class="button button--primary" type="button">СОЗДАТЬ PVE</button>
-                <button id="create-pvp" class="button" type="button">СОЗДАТЬ PVP</button>
-            </div>
-        </article>
-    </aside>
-</section>
-
-<section class="panel table-panel lobby-panel">
-    <div class="section-heading">
+<section class="page">
+    <div class="title-row">
+        <h1>PLAY</h1>
         <div>
-            <span class="terminal-line">&gt; games.available</span>
-            <h2>Игры и лобби</h2>
+            <button id="create-pve" class="button" type="button">Против бота</button>
+            <button id="create-pvp" class="button" type="button">PvP</button>
         </div>
-        <button id="reload-games" class="button button--small" type="button">ОБНОВИТЬ</button>
     </div>
 
-    <div id="games-loading" class="loading-line">Загрузка игр...</div>
-    <div id="games-error" class="error-box hidden"></div>
+    <p id="game-error" class="error hidden"></p>
 
-    <div class="table-wrap">
-        <table>
-            <thead><tr><th>ID</th><th>Тип</th><th>Статус</th><th>Создатель</th><th></th></tr></thead>
-            <tbody id="games-body"></tbody>
-        </table>
+    <div class="play-grid">
+        <section class="card game-card">
+            <div class="game-meta">
+                <strong id="game-title">Нет активной игры</strong>
+                <span id="game-status">Создай игру или выбери существующую.</span>
+                <small>ID: <span id="game-id">—</span> · режим: <span id="game-type">—</span> · вы: <span id="game-role">—</span></small>
+            </div>
+
+            <div id="game-board" class="tic-board board">
+                <button class="tic-cell board-cell" data-row="0" data-col="0" type="button"></button>
+                <button class="tic-cell board-cell" data-row="0" data-col="1" type="button"></button>
+                <button class="tic-cell board-cell" data-row="0" data-col="2" type="button"></button>
+                <button class="tic-cell board-cell" data-row="1" data-col="0" type="button"></button>
+                <button class="tic-cell board-cell" data-row="1" data-col="1" type="button"></button>
+                <button class="tic-cell board-cell" data-row="1" data-col="2" type="button"></button>
+                <button class="tic-cell board-cell" data-row="2" data-col="0" type="button"></button>
+                <button class="tic-cell board-cell" data-row="2" data-col="1" type="button"></button>
+                <button class="tic-cell board-cell" data-row="2" data-col="2" type="button"></button>
+            </div>
+
+            <button id="close-game" class="link-button hidden" type="button">Закрыть текущую игру</button>
+        </section>
+
+        <section class="card">
+            <div class="title-row small">
+                <h2>Игры</h2>
+                <button id="reload-games" class="link-button" type="button">Обновить</button>
+            </div>
+            <p id="games-error" class="error hidden"></p>
+            <div class="table-wrap">
+                <table>
+                    <thead><tr><th>ID</th><th>Тип</th><th>Игрок</th><th>Статус</th><th></th></tr></thead>
+                    <tbody id="games-body"></tbody>
+                </table>
+            </div>
+        </section>
     </div>
 </section>
-
-<script defer src="/static/js/play.js"></script>
 {{end}}

@@ -1,54 +1,23 @@
 {{define "content"}}
-<header class="page-header">
-    <span class="eyebrow">AUTH / 00</span>
-    <h1>ДОБРО<br><span class="accent">ПОЖАЛОВАТЬ.</span></h1>
-    <p>Войди в существующий аккаунт или зарегистрируй новый.</p>
-</header>
+<section class="page narrow">
+    <h1>AUTH</h1>
 
-<div id="already-authenticated" class="notice hidden">
-    <span class="terminal-line">&gt; session.active</span>
-    <p>Ты уже авторизован. Можно сразу перейти к игре.</p>
-    <a class="button button--primary" href="/play">ПЕРЕЙТИ К ИГРЕ</a>
-</div>
+    <div class="card auth-grid">
+        <form id="login-form">
+            <h2>Войти</h2>
+            <label>Логин<input id="login" required autocomplete="username"></label>
+            <label>Пароль<input id="password" type="password" required autocomplete="current-password"></label>
+            <button class="button primary" type="submit">Войти</button>
+            <p id="login-error" class="error"></p>
+        </form>
 
-<section id="auth-forms" class="two-columns">
-    <form id="login-form" class="panel form-panel">
-        <span class="terminal-line">&gt; auth.login</span>
-        <h2>Вход</h2>
-
-        <label class="field">
-            <span>Логин</span>
-            <input id="login" name="login" type="text" autocomplete="username" required>
-        </label>
-
-        <label class="field">
-            <span>Пароль</span>
-            <input id="password" name="password" type="password" autocomplete="current-password" required>
-        </label>
-
-        <p id="login-error" class="form-message form-message--error"></p>
-        <button class="button button--primary" type="submit">ВОЙТИ</button>
-    </form>
-
-    <form id="signup-form" class="panel form-panel">
-        <span class="terminal-line">&gt; auth.signup</span>
-        <h2>Регистрация</h2>
-
-        <label class="field">
-            <span>Логин</span>
-            <input id="signup-login" name="signup-login" type="text" autocomplete="username" required>
-        </label>
-
-        <label class="field">
-            <span>Пароль</span>
-            <input id="signup-password" name="signup-password" type="password" autocomplete="new-password" required>
-        </label>
-
-        <p id="signup-error" class="form-message form-message--error"></p>
-        <p id="signup-success" class="form-message form-message--success"></p>
-        <button class="button" type="submit">СОЗДАТЬ АККАУНТ</button>
-    </form>
+        <form id="signup-form">
+            <h2>Регистрация</h2>
+            <label>Логин<input id="signup-login" required autocomplete="username"></label>
+            <label>Пароль<input id="signup-password" type="password" required autocomplete="new-password"></label>
+            <button class="button" type="submit">Создать аккаунт</button>
+            <p id="signup-error" class="error"></p>
+        </form>
+    </div>
 </section>
-
-<script defer src="/static/js/login.js"></script>
 {{end}}

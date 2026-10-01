@@ -1,18 +1,10 @@
 {{define "content"}}
-<header class="page-header">
-    <span class="eyebrow">HISTORY / 04</span>
-    <h1>ИСТОРИЯ<br><span class="accent">МАТЧЕЙ.</span></h1>
-    <p>Завершённые игры текущего пользователя из <code>GET /userGames</code>.</p>
-</header>
-
-<div class="section-heading standalone-heading">
-    <span id="history-count" class="status-label">0 MATCHES</span>
-    <button id="reload-history" class="button button--small" type="button">ОБНОВИТЬ</button>
-</div>
-
-<div id="history-loading" class="loading-line">Загрузка истории...</div>
-<div id="history-error" class="error-box hidden"></div>
-<section id="history-list" class="history-list"></section>
-
-<script defer src="/static/js/history.js"></script>
+<section class="page narrow">
+    <div class="title-row">
+        <h1>HISTORY</h1>
+        <button id="reload-history" class="link-button" type="button">Обновить</button>
+    </div>
+    <p id="history-error" class="error hidden"></p>
+    <div id="history-list" class="history-list"></div>
+</section>
 {{end}}

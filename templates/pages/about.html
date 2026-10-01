@@ -1,40 +1,22 @@
 {{define "content"}}
-<header class="page-header">
-    <span class="eyebrow">ABOUT / 05</span>
-    <h1>О<br><span class="accent">ПРОЕКТЕ.</span></h1>
-    <p>Эту страницу потом отредактируем под финальную формулировку для сдачи.</p>
-</header>
+<section class="page narrow">
+    <h1>ABOUT</h1>
 
-<section class="two-columns">
-    <article class="panel">
-        <span class="terminal-line">&gt; project.info</span>
-        <h2>Учебная работа</h2>
-        <dl class="project-info">
-            <div><dt>Дисциплина</dt><dd>[название предмета]</dd></div>
-            <div><dt>Проект</dt><dd>Tic Tac Toe</dd></div>
-            <div><dt>Backend</dt><dd>Go / PostgreSQL / JWT</dd></div>
-            <div><dt>Frontend</dt><dd>Go templates / HTML / CSS / JavaScript</dd></div>
-        </dl>
-    </article>
-
-    <article class="panel">
-        <span class="terminal-line">&gt; source --open</span>
-        <h2>Исходный код</h2>
+    <div class="card text-card">
         <p>
-            Проект выполнен мной в рамках учебной работы. Здесь будет ссылка на Git-репозиторий
-            и краткое описание личного вклада.
+            Проект «Крестики-нолики» выполнен мной в рамках учебной работы.
+            Для этой работы был добавлен многостраничный веб-интерфейс к существующему Go-приложению.
         </p>
-        <a class="button button--primary" href="{{.GitHubURL}}" target="_blank" rel="noopener">ОТКРЫТЬ GIT</a>
-    </article>
-</section>
 
-<section class="panel text-panel">
-    <span class="terminal-line">&gt; README.md</span>
-    <h2>Что реализовано</h2>
-    <p>
-        Авторизация по JWT, регистрация пользователей, игры против алгоритма minimax,
-        PvP-режим, хранение состояния в PostgreSQL, история партий и таблица лидеров.
-        Для данной работы поверх проекта добавлен многостраничный веб-интерфейс.
-    </p>
+        <h2>Стек</h2>
+        <p>Go, PostgreSQL, JWT, HTML, CSS и vanilla JavaScript.</p>
+
+        <h2>Что реализовано</h2>
+        <p>Регистрация и вход, игра против бота и другого игрока, история матчей и таблица лидеров.</p>
+
+        {{if .GitHubURL}}
+        <a class="button primary" href="{{.GitHubURL}}" target="_blank" rel="noopener">Исходники на GitHub</a>
+        {{end}}
+    </div>
 </section>
 {{end}}

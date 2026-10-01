@@ -173,6 +173,10 @@ func (s *Service) GetUserInfo(userId string) (userLogin string, err error) {
 	return
 }
 
+func (s *Service) GetOpponentLogin(gameId string, userId string) (string, error) {
+	return s.repository.GetOpponentLogin(gameId, userId)
+}
+
 func (s *Service) Authenticate(login string, pass string) (string, error) {
 	userId, err := s.repository.CheckUser(login, pass)
 	if err != nil {

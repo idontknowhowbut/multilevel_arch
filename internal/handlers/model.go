@@ -13,13 +13,14 @@ type gameRequest struct {
 }
 
 type gameResponse struct {
-	Id         string    `json:"id"`
-	Board      Board     `json:"board"`
-	OwnerId    string    `json:"ownerId"`
-	GameType   string    `json:"gameType"`
-	MoveUserId string    `json:"moveUserId"`
-	Status     string    `json:"status"`
-	CreatedAt  time.Time `json:"createdAt"`
+	Id            string    `json:"id"`
+	Board         Board     `json:"board"`
+	OwnerId       string    `json:"ownerId"`
+	GameType      string    `json:"gameType"`
+	MoveUserId    string    `json:"moveUserId"`
+	Status        string    `json:"status"`
+	CreatedAt     time.Time `json:"createdAt"`
+	OpponentLogin string    `json:"opponentLogin,omitempty"`
 }
 
 type errorResponse struct {

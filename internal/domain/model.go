@@ -36,6 +36,14 @@ const (
 	StatusDraw             GameStatus = "Draw"
 )
 
+type GameResult string
+
+const (
+	ResultWin  GameResult = "WIN"
+	ResultLose GameResult = "LOSE"
+	ResultDraw GameResult = "DRAW"
+)
+
 type UserScore struct {
 	UserId    string
 	UserLogin string

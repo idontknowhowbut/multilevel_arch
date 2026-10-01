@@ -135,7 +135,15 @@ func (h *Handler) GetAvailableGames(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	writeJSON(w, http.StatusOK, gamesFromDomain(games))
+	response := gamesFromDomain(games)
+	for i := range response {
+		opponentLogin, err := h.service.GetOpponentLogin(games[i].Id.String(), userId)
+		if err == nil {
+			response[i].OpponentLogin = opponentLogin
+		}
+	}
+
+	writeJSON(w, http.StatusOK, response)
 }
 
 func (h *Handler) JoinGame(w http.ResponseWriter, r *http.Request) {
@@ -263,7 +271,7 @@ func (h *Handler) GetUserFinishedGames(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	writeJSON(w, http.StatusOK, gamesFromDomain(games))
+	writeJSON(w, http.StatusOK, userGamesFromDomain(games, userIdUuid))
 }
 
 func (h *Handler) GetCallerFinishedGames(w http.ResponseWriter, r *http.Request) {
@@ -280,7 +288,7 @@ func (h *Handler) GetCallerFinishedGames(w http.ResponseWriter, r *http.Request)
 		return
 	}
 
-	writeJSON(w, http.StatusOK, gamesFromDomain(games))
+	writeJSON(w, http.StatusOK, userGamesFromDomain(games, userIdUuid))
 }
 
 func (h *Handler) GetScoreBoard(w http.ResponseWriter, r *http.Request) {

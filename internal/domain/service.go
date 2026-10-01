@@ -153,6 +153,28 @@ func IsGameOver(currBoard Board) (winner int, isGameOver bool) {
 	return 0, true
 }
 
+func ResultForUser(game Game, userId uuid.UUID) GameResult {
+	winner, isOver := IsGameOver(game.Board)
+	if !isOver {
+		return ""
+	}
+
+	if winner == 0 {
+		return ResultDraw
+	}
+
+	playerMark := 1
+	if game.OwnerId != userId {
+		playerMark = 2
+	}
+
+	if winner == playerMark {
+		return ResultWin
+	}
+
+	return ResultLose
+}
+
 func New(userId string, gameType GameType) *Game {
 	userIdUuid, err := uuid.Parse(userId)
 	if err != nil {

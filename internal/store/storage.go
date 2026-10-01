@@ -219,6 +219,26 @@ func (s *Storage) getUserLogin(userId string) (userLogin string, err error) {
 	return
 }
 
+func (s *Storage) getOpponentLogin(gameId string, userId string) (string, error) {
+	ctx, cancel := context.WithTimeout(context.Background(), 60*time.Second)
+	defer cancel()
+
+	query := `SELECT users.login
+		FROM users_games
+		JOIN users ON users.id = users_games.user_id
+		WHERE users_games.game_id = $1::uuid
+		  AND users_games.user_id != $2::uuid
+		LIMIT 1`
+
+	var login string
+	err := s.pool.QueryRow(ctx, query, gameId, userId).Scan(&login)
+	if err != nil {
+		return "", err
+	}
+
+	return login, nil
+}
+
 func (s *Storage) updateRefreshToken(userId string, refreshToken string) error {
 	ctx, cancel := context.WithTimeout(context.Background(), 60*time.Second)
 	defer cancel()
