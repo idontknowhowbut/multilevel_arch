@@ -32,7 +32,16 @@ const (
 	StatusPlayerMove       GameStatus = "Waiting for player move"
 	StatusWaitingForPlayer GameStatus = "Waiting for player connection"
 	StatusPlayerWon        GameStatus = "Player won"
+	StatusBotWon           GameStatus = "Bot won"
 	StatusDraw             GameStatus = "Draw"
+)
+
+type GameResult string
+
+const (
+	ResultWin  GameResult = "WIN"
+	ResultLose GameResult = "LOSE"
+	ResultDraw GameResult = "DRAW"
 )
 
 type UserScore struct {

@@ -8,7 +8,6 @@ import (
 	"tictactoe/internal/app"
 	"tictactoe/internal/domain"
 	jwtservice "tictactoe/internal/jwt"
-	"time"
 
 	"github.com/google/uuid"
 )
@@ -36,7 +35,6 @@ func (h *Handler) PostGame(w http.ResponseWriter, r *http.Request) {
 	board := fromHandlerToDomain(req.Board)
 
 	userId, ok := r.Context().Value("userId").(string)
-
 	if !ok {
 		http.Error(w, "prank gone wrong", http.StatusBadRequest)
 		return
@@ -53,17 +51,7 @@ func (h *Handler) PostGame(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	resp := gameResponse{
-		Id:         newGameState.Id.String(),
-		Board:      Board(newGameState.Board),
-		GameType:   string(newGameState.Type),
-		MoveUserId: newGameState.MovePlayerId.String(),
-		Status:     string(newGameState.Status),
-		CreatedAt:  newGameState.CreatedAt,
-	}
-	w.Header().Set("Content-Type", "application/json")
-	json.NewEncoder(w).Encode(resp)
-
+	writeJSON(w, http.StatusOK, gameFromDomain(newGameState))
 }
 
 func (h *Handler) CreateGame(w http.ResponseWriter, r *http.Request) {
@@ -84,40 +72,41 @@ func (h *Handler) CreateGame(w http.ResponseWriter, r *http.Request) {
 	gameType := domain.GameType(req.GameType)
 
 	newGame, err := h.service.CreateGame(userId, gameType)
-
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
 
-	resp := gameResponse{
-		Id:         newGame.Id.String(),
-		Board:      fromDomainToHandler(newGame.Board),
-		GameType:   req.GameType,
-		MoveUserId: userId,
-		Status:     string(domain.StatusCreated),
-		CreatedAt:  time.Now(),
-	}
-
-	w.Header().Set("Content-Type", "application/json")
-	json.NewEncoder(w).Encode(resp)
+	writeJSON(w, http.StatusOK, gameFromDomain(newGame))
 }
 
 func (h *Handler) SignUpRequest(w http.ResponseWriter, r *http.Request) {
 	var req credentialsRequest
-	err := json.NewDecoder(r.Body).Decode(&req)
-	if err != nil {
+	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
 
-	err = h.service.SignUpUser(req.Login, req.Password)
-	if err != nil {
+	if err := h.service.SignUpUser(req.Login, req.Password); err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
 
-	w.WriteHeader(http.StatusOK)
+	// Registration immediately authenticates the newly created user,
+	// so signUp and login return the same token pair contract.
+	userId, err := h.service.Authenticate(req.Login, req.Password)
+	if err != nil {
+		http.Error(w, "Auth failed", http.StatusInternalServerError)
+		return
+	}
+
+	resp, err := h.createTokenResponse(userId)
+	if err != nil {
+		http.Error(w, "Auth failed", http.StatusInternalServerError)
+		return
+	}
+
+	writeJSON(w, http.StatusCreated, resp)
 }
 
 func (h *Handler) GetUserId(w http.ResponseWriter, r *http.Request) {
@@ -127,44 +116,67 @@ func (h *Handler) GetUserId(w http.ResponseWriter, r *http.Request) {
 		UserID: userId.(string),
 	}
 
-	w.Header().Set("Content-Type", "application/json")
-	json.NewEncoder(w).Encode(resp)
+	writeJSON(w, http.StatusOK, resp)
 }
 
 func (h *Handler) GetAvailableGames(w http.ResponseWriter, r *http.Request) {
-
 	ctx := r.Context()
 	userId := ctx.Value("userId").(string)
 
-	userIdUuid, _ := uuid.Parse(userId)
+	userIdUuid, err := uuid.Parse(userId)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
+	}
 
-	games, _ := h.service.GetAvailableGames(userIdUuid)
-	w.Header().Set("Content-Type", "application/json")
-	json.NewEncoder(w).Encode(games)
+	games, err := h.service.GetAvailableGames(userIdUuid)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	response := gamesFromDomain(games)
+	for i := range response {
+		opponentLogin, err := h.service.GetOpponentLogin(games[i].Id.String(), userId)
+		if err == nil {
+			response[i].OpponentLogin = opponentLogin
+		}
+	}
+
+	writeJSON(w, http.StatusOK, response)
 }
 
 func (h *Handler) JoinGame(w http.ResponseWriter, r *http.Request) {
-	w.Header().Set("Content-Type", "application/json")
-
 	ctx := r.Context()
 	userId := ctx.Value("userId").(string)
 
-	userIdUuid, _ := uuid.Parse(userId)
-	gameId, err := uuid.Parse(r.PathValue("id"))
-
-	err = h.service.JoinGame(userIdUuid, gameId)
-
+	userIdUuid, err := uuid.Parse(userId)
 	if err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
+	}
+
+	gameId, err := uuid.Parse(r.PathValue("id"))
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
+	}
+
+	if err = h.service.JoinGame(userIdUuid, gameId); err != nil {
 		http.Error(w, err.Error(), http.StatusBadGateway)
 		return
 	}
 
-	json.NewEncoder(w).Encode(gameId)
+	game, err := h.service.GetGame(gameId)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	writeJSON(w, http.StatusOK, gameFromDomain(game))
 }
 
 func (h *Handler) GetGame(w http.ResponseWriter, r *http.Request) {
-	w.Header().Set("Content-Type", "application/json")
-
 	gameId, err := uuid.Parse(r.PathValue("id"))
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
@@ -177,15 +189,7 @@ func (h *Handler) GetGame(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	resp := gameResponse{
-		Board:      fromDomainToHandler(game.Board),
-		Id:         game.Id.String(),
-		GameType:   string(game.Type),
-		MoveUserId: game.MovePlayerId.String(),
-	}
-
-	json.NewEncoder(w).Encode(resp)
-
+	writeJSON(w, http.StatusOK, gameFromDomain(game))
 }
 
 func (h *Handler) GetUserInfo(w http.ResponseWriter, r *http.Request) {
@@ -200,12 +204,9 @@ func (h *Handler) GetUserInfo(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h *Handler) GetTokenPair(w http.ResponseWriter, r *http.Request) {
-	w.Header().Set("Content-Type", "application/json")
-
 	req := credentialsRequest{}
 
-	err := json.NewDecoder(r.Body).Decode(&req)
-	if err != nil {
+	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
 		http.Error(w, "Auth failed", http.StatusUnauthorized)
 		return
 	}
@@ -216,28 +217,20 @@ func (h *Handler) GetTokenPair(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	tokenAccess, tokenRefresh, err := h.service.CreateTokenPair(userId)
+	resp, err := h.createTokenResponse(userId)
 	if err != nil {
 		http.Error(w, "Auth failed", http.StatusInternalServerError)
 		fmt.Println(err)
 		return
 	}
 
-	resp := tokenResponse{
-		AccessToken:  tokenAccess,
-		RefreshToken: tokenRefresh,
-	}
-
-	json.NewEncoder(w).Encode(resp)
+	writeJSON(w, http.StatusOK, resp)
 }
 
 func (h *Handler) RefreshTokenPair(w http.ResponseWriter, r *http.Request) {
-	w.Header().Set("Content-Type", "application/json")
-
 	req := refreshTokensRequest{}
 
-	err := json.NewDecoder(r.Body).Decode(&req)
-	if err != nil {
+	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
@@ -253,51 +246,83 @@ func (h *Handler) RefreshTokenPair(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	tokenAccess, tokenRefresh, err := h.service.CreateTokenPair(userId)
+	resp, err := h.createTokenResponse(userId)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		fmt.Println(err)
 		return
 	}
 
-	resp := tokenResponse{
-		AccessToken:  tokenAccess,
-		RefreshToken: tokenRefresh,
-	}
-
-	json.NewEncoder(w).Encode(resp)
+	writeJSON(w, http.StatusOK, resp)
 }
 
 func (h *Handler) GetUserFinishedGames(w http.ResponseWriter, r *http.Request) {
-
 	userId := r.PathValue("id")
 
-	userIdUuid, _ := uuid.Parse(userId)
+	userIdUuid, err := uuid.Parse(userId)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
+	}
 
-	games, _ := h.service.GetUserFinishedGames(userIdUuid)
-	w.Header().Set("Content-Type", "application/json")
-	json.NewEncoder(w).Encode(games)
+	games, err := h.service.GetUserFinishedGames(userIdUuid)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	writeJSON(w, http.StatusOK, userGamesFromDomain(games, userIdUuid))
 }
 
 func (h *Handler) GetCallerFinishedGames(w http.ResponseWriter, r *http.Request) {
-
 	userId := r.Context().Value("userId").(string)
-	userIdUuid, _ := uuid.Parse(userId)
+	userIdUuid, err := uuid.Parse(userId)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
+	}
 
-	games, _ := h.service.GetUserFinishedGames(userIdUuid)
-	w.Header().Set("Content-Type", "application/json")
-	json.NewEncoder(w).Encode(games)
+	games, err := h.service.GetUserFinishedGames(userIdUuid)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	writeJSON(w, http.StatusOK, userGamesFromDomain(games, userIdUuid))
 }
 
 func (h *Handler) GetScoreBoard(w http.ResponseWriter, r *http.Request) {
-
 	limit, err := strconv.Atoi(r.URL.Query().Get("limit"))
 	if err != nil {
 		http.Error(w, "bad request", http.StatusBadRequest)
 		return
 	}
 
-	games, _ := h.service.GetScoreBoard(limit)
+	scores, err := h.service.GetScoreBoard(limit)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	writeJSON(w, http.StatusOK, scoreBoardFromDomain(scores))
+}
+
+func (h *Handler) createTokenResponse(userId string) (tokenResponse, error) {
+	tokenAccess, tokenRefresh, err := h.service.CreateTokenPair(userId)
+	if err != nil {
+		return tokenResponse{}, err
+	}
+
+	return tokenResponse{
+		AccessToken:  tokenAccess,
+		RefreshToken: tokenRefresh,
+	}, nil
+}
+
+func writeJSON(w http.ResponseWriter, status int, value any) {
 	w.Header().Set("Content-Type", "application/json")
-	json.NewEncoder(w).Encode(games)
+	w.WriteHeader(status)
+	if err := json.NewEncoder(w).Encode(value); err != nil {
+		fmt.Println(err)
+	}
 }

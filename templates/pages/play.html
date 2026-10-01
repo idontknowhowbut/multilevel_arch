@@ -1,0 +1,51 @@
+{{define "content"}}
+<section class="page">
+    <div class="title-row">
+        <h1>PLAY</h1>
+        <div>
+            <button id="create-pve" class="button" type="button">Против бота</button>
+            <button id="create-pvp" class="button" type="button">PvP</button>
+        </div>
+    </div>
+
+    <p id="game-error" class="error hidden"></p>
+
+    <div class="play-grid">
+        <section class="card game-card">
+            <div class="game-meta">
+                <strong id="game-title">Нет активной игры</strong>
+                <span id="game-status">Создай игру или выбери существующую.</span>
+                <small>ID: <span id="game-id">—</span> · режим: <span id="game-type">—</span> · вы: <span id="game-role">—</span></small>
+            </div>
+
+            <div id="game-board" class="tic-board board">
+                <button class="tic-cell board-cell" data-row="0" data-col="0" type="button"></button>
+                <button class="tic-cell board-cell" data-row="0" data-col="1" type="button"></button>
+                <button class="tic-cell board-cell" data-row="0" data-col="2" type="button"></button>
+                <button class="tic-cell board-cell" data-row="1" data-col="0" type="button"></button>
+                <button class="tic-cell board-cell" data-row="1" data-col="1" type="button"></button>
+                <button class="tic-cell board-cell" data-row="1" data-col="2" type="button"></button>
+                <button class="tic-cell board-cell" data-row="2" data-col="0" type="button"></button>
+                <button class="tic-cell board-cell" data-row="2" data-col="1" type="button"></button>
+                <button class="tic-cell board-cell" data-row="2" data-col="2" type="button"></button>
+            </div>
+
+            <button id="close-game" class="link-button hidden" type="button">Закрыть текущую игру</button>
+        </section>
+
+        <section class="card">
+            <div class="title-row small">
+                <h2>Игры</h2>
+                <button id="reload-games" class="link-button" type="button">Обновить</button>
+            </div>
+            <p id="games-error" class="error hidden"></p>
+            <div class="table-wrap">
+                <table>
+                    <thead><tr><th>ID</th><th>Тип</th><th>Игрок</th><th>Статус</th><th></th></tr></thead>
+                    <tbody id="games-body"></tbody>
+                </table>
+            </div>
+        </section>
+    </div>
+</section>
+{{end}}

@@ -11,6 +11,7 @@ func fromDomainToStore(domainGame domain.Game) (storeGame game) {
 	storeGame.board = board(domainGame.Board)
 	storeGame.movePlayerId = domainGame.MovePlayerId.String()
 	storeGame.ownerId = domainGame.OwnerId.String()
+	storeGame.createdAt = domainGame.CreatedAt
 
 	domainStatus := domainGame.Status
 	switch domainStatus {
@@ -24,6 +25,8 @@ func fromDomainToStore(domainGame domain.Game) (storeGame game) {
 		storeGame.status = "DRAW"
 	case domain.StatusPlayerWon:
 		storeGame.status = "PLAYER_WON"
+	case domain.StatusBotWon:
+		storeGame.status = "BOT_WON"
 	default:
 		storeGame.status = "UNKNOWN"
 	}
@@ -45,6 +48,7 @@ func fromStoreToDomain(storeGame game) (domainGame domain.Game) {
 	domainGame.MovePlayerId, _ = uuid.Parse(storeGame.movePlayerId)
 	domainGame.OwnerId, _ = uuid.Parse(storeGame.ownerId)
 	domainGame.Type = domain.GameType(storeGame.gameType)
+	domainGame.CreatedAt = storeGame.createdAt
 
 	storeStatus := storeGame.status
 	switch storeStatus {
@@ -58,6 +62,8 @@ func fromStoreToDomain(storeGame game) (domainGame domain.Game) {
 		domainGame.Status = domain.StatusDraw
 	case "PLAYER_WON":
 		domainGame.Status = domain.StatusPlayerWon
+	case "BOT_WON":
+		domainGame.Status = domain.StatusBotWon
 	default:
 		domainGame.Status = "unknown"
 	}

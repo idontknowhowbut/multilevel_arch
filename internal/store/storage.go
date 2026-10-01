@@ -48,7 +48,7 @@ func (s *Storage) load(id string) (game, error) {
 	ctx, cancel := context.WithTimeout(context.Background(), 60*time.Second)
 	defer cancel()
 
-	query := `SELECT id, board, status, type, move_player_id, owner_player_id
+	query := `SELECT id, board, status, type, move_player_id, owner_player_id, created_at
 		FROM games
 		WHERE id = $1`
 
@@ -219,6 +219,26 @@ func (s *Storage) getUserLogin(userId string) (userLogin string, err error) {
 	return
 }
 
+func (s *Storage) getOpponentLogin(gameId string, userId string) (string, error) {
+	ctx, cancel := context.WithTimeout(context.Background(), 60*time.Second)
+	defer cancel()
+
+	query := `SELECT users.login
+		FROM users_games
+		JOIN users ON users.id = users_games.user_id
+		WHERE users_games.game_id = $1::uuid
+		  AND users_games.user_id != $2::uuid
+		LIMIT 1`
+
+	var login string
+	err := s.pool.QueryRow(ctx, query, gameId, userId).Scan(&login)
+	if err != nil {
+		return "", err
+	}
+
+	return login, nil
+}
+
 func (s *Storage) updateRefreshToken(userId string, refreshToken string) error {
 	ctx, cancel := context.WithTimeout(context.Background(), 60*time.Second)
 	defer cancel()
@@ -238,7 +258,7 @@ func (s *Storage) GetUserFinishedGames(userId string) ([]gameRow, error) {
 	query := `SELECT id, board, status, type, move_player_id, owner_player_id, created_at
 		FROM games
 		JOIN users_games on games.id = users_games.game_id
-		WHERE (status = 'PLAYER_WON' OR status = 'DRAW') and user_id = $1`
+		WHERE status IN ('PLAYER_WON', 'BOT_WON', 'DRAW') and user_id = $1`
 
 	res, err := s.pool.Query(ctx, query, userId)
 	games, err := pgx.CollectRows(res, pgx.RowToStructByNameLax[gameRow])

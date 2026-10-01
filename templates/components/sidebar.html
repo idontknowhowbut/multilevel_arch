@@ -1,0 +1,26 @@
+{{define "sidebar"}}
+<aside class="sidebar">
+    <a class="logo" href="/" aria-label="Tic Tac Toe">
+        <span>TIC</span>
+        <span>TAC</span>
+        <span>TOE</span>
+    </a>
+
+    <nav>
+        <a class="{{if eq .Active "home"}}active{{end}}" href="/">Главная</a>
+        <a class="{{if eq .Active "play"}}active{{end}}" href="/play">Играть</a>
+        <a class="{{if eq .Active "leaderboard"}}active{{end}}" href="/leaderboard">Лидеры</a>
+        <a class="{{if eq .Active "history"}}active{{end}}" href="/history">История</a>
+        <a class="{{if eq .Active "about"}}active{{end}}" href="/about">О проекте</a>
+    </nav>
+
+    <div class="session">
+        <div class="session-user">
+            <span id="session-led" class="status-led" title="Не авторизован"></span>
+            <span id="session-user">Гость</span>
+        </div>
+        <a id="login-link" href="/login">Войти</a>
+        <button id="logout-button" class="hidden" type="button">Выйти</button>
+    </div>
+</aside>
+{{end}}

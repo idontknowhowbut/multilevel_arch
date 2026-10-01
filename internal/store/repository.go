@@ -89,6 +89,10 @@ func (r *Repository) GetUserLogin(userId string) (userLogin string, err error) {
 	return userLogin, err
 }
 
+func (r *Repository) GetOpponentLogin(gameId string, userId string) (string, error) {
+	return r.storage.getOpponentLogin(gameId, userId)
+}
+
 func (r *Repository) UpdateRefreshToken(userId string, refreshToken string) (err error) {
 	err = r.storage.updateRefreshToken(userId, refreshToken)
 	return err

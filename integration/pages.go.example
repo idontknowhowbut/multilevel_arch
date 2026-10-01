@@ -1,0 +1,40 @@
+package handlers
+
+import (
+    "html/template"
+    "net/http"
+    "path/filepath"
+    "time"
+)
+
+type PageData struct {
+    Title     string
+    Active    string
+    Year      int
+    GitHubURL string
+}
+
+func renderPage(w http.ResponseWriter, page string, data PageData) {
+    files := []string{
+        "templates/layout.html",
+        "templates/components/sidebar.html",
+        "templates/components/footer.html",
+        filepath.Join("templates/pages", page+".html"),
+    }
+    tmpl, err := template.ParseFiles(files...)
+    if err != nil { http.Error(w, err.Error(), http.StatusInternalServerError); return }
+    if err := tmpl.ExecuteTemplate(w, "layout", data); err != nil {
+        http.Error(w, err.Error(), http.StatusInternalServerError)
+    }
+}
+
+func pageData(title, active string) PageData {
+    return PageData{Title: title, Active: active, Year: time.Now().Year(), GitHubURL: "#"}
+}
+
+func (h *Handler) HomePage(w http.ResponseWriter, r *http.Request)        { renderPage(w, "home", pageData("Tic Tac Toe", "home")) }
+func (h *Handler) LoginPage(w http.ResponseWriter, r *http.Request)       { renderPage(w, "login", pageData("Tic Tac Toe — Вход", "")) }
+func (h *Handler) PlayPage(w http.ResponseWriter, r *http.Request)        { renderPage(w, "play", pageData("Tic Tac Toe — Играть", "play")) }
+func (h *Handler) LeaderboardPage(w http.ResponseWriter, r *http.Request) { renderPage(w, "leaderboard", pageData("Tic Tac Toe — Лидеры", "leaderboard")) }
+func (h *Handler) HistoryPage(w http.ResponseWriter, r *http.Request)     { renderPage(w, "history", pageData("Tic Tac Toe — История", "history")) }
+func (h *Handler) AboutPage(w http.ResponseWriter, r *http.Request)       { renderPage(w, "about", pageData("Tic Tac Toe — О проекте", "about")) }

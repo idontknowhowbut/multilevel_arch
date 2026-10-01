@@ -1,0 +1,22 @@
+{{define "content"}}
+<section class="page narrow">
+    <h1>ABOUT</h1>
+
+    <div class="card text-card">
+        <p>
+            Проект «Крестики-нолики» выполнен мной в рамках учебной работы.
+            Для этой работы был добавлен многостраничный веб-интерфейс к существующему Go-приложению.
+        </p>
+
+        <h2>Стек</h2>
+        <p>Go, PostgreSQL, JWT, HTML, CSS и vanilla JavaScript.</p>
+
+        <h2>Что реализовано</h2>
+        <p>Регистрация и вход, игра против бота и другого игрока, история матчей и таблица лидеров.</p>
+
+        {{if .GitHubURL}}
+        <a class="button primary" href="{{.GitHubURL}}" target="_blank" rel="noopener">Исходники на GitHub</a>
+        {{end}}
+    </div>
+</section>
+{{end}}

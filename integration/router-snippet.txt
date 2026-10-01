@@ -1,0 +1,11 @@
+// Добавить после mux := http.NewServeMux()
+
+mux.HandleFunc("GET /{$}", h.HomePage)
+mux.HandleFunc("GET /login", h.LoginPage)
+mux.HandleFunc("GET /play", h.PlayPage)
+mux.HandleFunc("GET /leaderboard", h.LeaderboardPage)
+mux.HandleFunc("GET /history", h.HistoryPage)
+mux.HandleFunc("GET /about", h.AboutPage)
+
+static := http.FileServer(http.Dir("./static"))
+mux.Handle("GET /static/", http.StripPrefix("/static/", static))

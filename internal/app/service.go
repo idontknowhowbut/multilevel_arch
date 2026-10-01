@@ -84,9 +84,12 @@ func (s *Service) ProcessMove(id string, currBoard domain.Board, userId string) 
 
 		winner, isOver := domain.IsGameOver(currBoard)
 		if isOver {
-			if winner == 0 {
+			switch winner {
+			case 0:
 				currGame.Status = domain.StatusDraw
-			} else {
+			case 2:
+				currGame.Status = domain.StatusBotWon
+			default:
 				currGame.Status = domain.StatusPlayerWon
 			}
 			s.repository.Save(currGame)
@@ -168,6 +171,10 @@ func (s *Service) GetGame(gameId uuid.UUID) (domain.Game, error) {
 func (s *Service) GetUserInfo(userId string) (userLogin string, err error) {
 	userLogin, err = s.repository.GetUserLogin(userId)
 	return
+}
+
+func (s *Service) GetOpponentLogin(gameId string, userId string) (string, error) {
+	return s.repository.GetOpponentLogin(gameId, userId)
 }
 
 func (s *Service) Authenticate(login string, pass string) (string, error) {

@@ -1,0 +1,15 @@
+{{define "content"}}
+<section class="page narrow">
+    <div class="title-row">
+        <h1>LEADERBOARD</h1>
+        <button id="reload-leaderboard" class="link-button" type="button">Обновить</button>
+    </div>
+    <p id="leaderboard-error" class="error hidden"></p>
+    <div class="card table-wrap">
+        <table>
+            <thead><tr><th>#</th><th>Игрок</th><th>Win rate</th></tr></thead>
+            <tbody id="leaderboard-body"></tbody>
+        </table>
+    </div>
+</section>
+{{end}}

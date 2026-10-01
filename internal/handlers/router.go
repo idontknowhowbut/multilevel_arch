@@ -28,5 +28,20 @@ func NewRouter(h *Handler, auth *middleware.AuthService) http.Handler {
 	mux.HandleFunc("GET /userGames", auth.Auth(h.GetCallerFinishedGames))
 	mux.HandleFunc("GET /scoreboard", auth.Auth(h.GetScoreBoard))
 
+	//FE routes
+	mux.HandleFunc("GET /{$}", h.HomePage)
+	mux.HandleFunc("GET /play", h.PlayPage)
+	mux.HandleFunc("GET /leaderboard", h.LeaderboardPage)
+	mux.HandleFunc("GET /history", h.HistoryPage)
+	mux.HandleFunc("GET /about", h.AboutPage)
+	mux.HandleFunc("GET /login", h.LoginPage)
+
+	static := http.FileServer(http.Dir("./static"))
+
+	mux.Handle(
+		"GET /static/",
+		http.StripPrefix("/static/", static),
+	)
+
 	return mux
 }
