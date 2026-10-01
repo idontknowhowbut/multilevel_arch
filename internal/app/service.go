@@ -84,9 +84,12 @@ func (s *Service) ProcessMove(id string, currBoard domain.Board, userId string) 
 
 		winner, isOver := domain.IsGameOver(currBoard)
 		if isOver {
-			if winner == 0 {
+			switch winner {
+			case 0:
 				currGame.Status = domain.StatusDraw
-			} else {
+			case 2:
+				currGame.Status = domain.StatusBotWon
+			default:
 				currGame.Status = domain.StatusPlayerWon
 			}
 			s.repository.Save(currGame)

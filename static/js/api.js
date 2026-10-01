@@ -25,8 +25,6 @@
             localStorage.removeItem(REFRESH_KEY);
             localStorage.removeItem(LOGIN_KEY);
             localStorage.removeItem("ttt.currentGameId");
-            localStorage.removeItem("ttt.currentGameOwnerId");
-            localStorage.removeItem("ttt.currentGameWaiting");
         },
 
         requireAuth() {
@@ -41,7 +39,9 @@
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({ login, password }),
             });
+
             if (!response.ok) throw new Error(await errorText(response));
+
             const tokens = await response.json();
             this.saveSession(tokens, login);
             return tokens;
@@ -53,17 +53,25 @@
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({ login, password }),
             });
+
             if (!response.ok) throw new Error(await errorText(response));
+
+            const tokens = await response.json();
+            this.saveSession(tokens, login);
+            return tokens;
         },
 
         async refresh() {
             if (!this.refreshToken) throw new Error("Refresh token отсутствует");
+
             const response = await fetch("/auth/refresh", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({ refreshToken: this.refreshToken }),
             });
+
             if (!response.ok) throw new Error(await errorText(response));
+
             const tokens = await response.json();
             this.saveSession(tokens, this.loginName);
             return tokens.accessToken;
@@ -71,13 +79,16 @@
 
         async request(url, options = {}, retry = true) {
             if (!this.accessToken) throw new Error("Требуется авторизация");
+
             const headers = { ...(options.headers || {}) };
             headers.Authorization = `Bearer ${this.accessToken}`;
+
             if (options.body && !(options.body instanceof FormData) && !headers["Content-Type"]) {
                 headers["Content-Type"] = "application/json";
             }
 
             let response = await fetch(url, { ...options, headers });
+
             if (response.status === 401 && retry && this.refreshToken) {
                 try {
                     const accessToken = await this.refresh();
@@ -88,6 +99,7 @@
                     window.location.href = "/login";
                 }
             }
+
             return response;
         },
 

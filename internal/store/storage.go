@@ -238,7 +238,7 @@ func (s *Storage) GetUserFinishedGames(userId string) ([]gameRow, error) {
 	query := `SELECT id, board, status, type, move_player_id, owner_player_id, created_at
 		FROM games
 		JOIN users_games on games.id = users_games.game_id
-		WHERE (status = 'PLAYER_WON' OR status = 'DRAW') and user_id = $1`
+		WHERE status IN ('PLAYER_WON', 'BOT_WON', 'DRAW') and user_id = $1`
 
 	res, err := s.pool.Query(ctx, query, userId)
 	games, err := pgx.CollectRows(res, pgx.RowToStructByNameLax[gameRow])

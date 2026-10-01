@@ -32,6 +32,7 @@ const (
 	StatusPlayerMove       GameStatus = "Waiting for player move"
 	StatusWaitingForPlayer GameStatus = "Waiting for player connection"
 	StatusPlayerWon        GameStatus = "Player won"
+	StatusBotWon           GameStatus = "Bot won"
 	StatusDraw             GameStatus = "Draw"
 )
 

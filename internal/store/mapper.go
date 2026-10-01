@@ -25,6 +25,8 @@ func fromDomainToStore(domainGame domain.Game) (storeGame game) {
 		storeGame.status = "DRAW"
 	case domain.StatusPlayerWon:
 		storeGame.status = "PLAYER_WON"
+	case domain.StatusBotWon:
+		storeGame.status = "BOT_WON"
 	default:
 		storeGame.status = "UNKNOWN"
 	}
@@ -60,6 +62,8 @@ func fromStoreToDomain(storeGame game) (domainGame domain.Game) {
 		domainGame.Status = domain.StatusDraw
 	case "PLAYER_WON":
 		domainGame.Status = domain.StatusPlayerWon
+	case "BOT_WON":
+		domainGame.Status = domain.StatusBotWon
 	default:
 		domainGame.Status = "unknown"
 	}
