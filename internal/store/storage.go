@@ -140,7 +140,11 @@ func (s *Storage) getNextUserId(gameId string) (userId string, err error) {
 	ctx, cancel := context.WithTimeout(context.Background(), 60*time.Second)
 	defer cancel()
 
-	res, err := s.pool.Query(ctx, "SELECT user_id FROM users_games WHERE game_id = $1 AND user_id::text != (SELECT move_player_id FROM games WHERE id = $1)", gameId)
+	res, err := s.pool.Query(
+    ctx,
+    "SELECT user_id FROM users_games WHERE game_id = $1::uuid AND user_id != (SELECT move_player_id FROM games WHERE id = $1::uuid)",
+    gameId,
+)
 
 	if err != nil {
 		return "", err
